@@ -3,7 +3,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getDomainData } from "../../db";
 import { FormSchema } from "../../schema";
 import { z } from "zod";
-import { calculateDensity, calculateEffiency } from "../../utils";
+import { calculateActivityConcentration, calculateDensity, calculateEffiency } from "../../utils";
 import { Icons } from "@/components/icons";
 
 export default async function Result(params: {params: { id: string }}) {
@@ -67,6 +67,14 @@ export default async function Result(params: {params: { id: string }}) {
             <h1 className="font-heading text-3xl md:text-4xl">
               {calculateEffiency(currentData).toFixed(5)}
               <span className="text-lg">{" "}keV</span>
+            </h1>
+          </div>
+
+          <div className="grid gap-1 mt-6">
+            <p className="text-lg text-muted-foreground">Activity Concentration </p>
+            <h1 className="font-heading text-3xl md:text-4xl">
+              {calculateActivityConcentration(currentData).toFixed(5)}
+              <span className="text-lg">{" "}Bq/g</span>
             </h1>
           </div>
         </div>

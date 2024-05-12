@@ -19,4 +19,13 @@ export const FormSchema = z.object({
   energy: z.string().min(1, {
     message: "Required",
   }),
+  sampleVolume: z.string().min(1, {
+    message: "Required",
+  }),
+  counts: z.string().min(1, {
+    message: "Required",
+  }),
+  liveTime: z.string().min(1, {
+    message: "Required",
+  }),
 });

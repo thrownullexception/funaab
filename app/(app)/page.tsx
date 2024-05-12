@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/select";
 import { FormSchema } from "./schema";
 import { calculateDensity } from "./utils";
-import { redirect } from "next/navigation";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/navigation";
 
@@ -41,6 +40,8 @@ export default function InputForm() {
       material: "",
       sampleId: "",
       sampleMass: "",
+      sampleVolume: "",
+      counts: "",
       sampleHeight: "",
       sampleRadius: "",
       energy: "",
@@ -61,7 +62,9 @@ export default function InputForm() {
     router.push("/result/" + id);
   }
 
-  const density = calculateDensity(form.watch());
+  const formValues = form.watch();
+
+  const density = calculateDensity(formValues);
 
   return (
     <AppShell>
@@ -125,9 +128,55 @@ export default function InputForm() {
                 <FormItem>
                   <FormLabel>Sample Height</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input type="number" {...field} max={10} />
                   </FormControl>
                   <FormDescription>Height of sample in cm</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="sampleVolume"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sample Volume</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Volume of sample in cm<sup>3</sup>
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="counts"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Counts</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="liveTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Live Time</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormDescription>Live time is seconds</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -150,12 +199,16 @@ export default function InputForm() {
               )}
             />
 
-            <AppShell.Header heading={"Module 2: Assign Efficiency"} />
+            <AppShell.Header heading={"Module 2: Efficiency Calculation"} />
 
             <FormItem>
               <FormLabel>Sample Density</FormLabel>
               <FormControl>
-                <Input type="number" disabled={true} value={density.toFixed(2)} />
+                <Input
+                  type="number"
+                  disabled={true}
+                  value={density.toFixed(2)}
+                />
               </FormControl>
               <FormDescription>
                 Density of sample in g/cm<sup>3</sup>
@@ -163,43 +216,54 @@ export default function InputForm() {
               <FormMessage />
             </FormItem>
 
-            {density < 0.11 || density > 1.29 ? (
+            {Number(formValues.sampleHeight) > 10 ? (
               <Alert variant="destructive">
                 <Icons.warning className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
-                  Density of sample is out of range
+                  Height of sample is greater than 10cm
                 </AlertDescription>
               </Alert>
             ) : (
               <>
-                <FormField
-                  control={form.control}
-                  name="energy"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Energy of Interest</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Energy of Interest" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="1460">1460 keV</SelectItem>
-                          <SelectItem value="1764">1764 keV</SelectItem>
-                          <SelectItem value="2614">2614 keV</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <Button type="submit">Submit</Button>
+                {density < 0.11 || density > 1.29 ? (
+                  <Alert variant="destructive">
+                    <Icons.warning className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>
+                      Density of sample is out of range
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="energy"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Energy of Interest</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Energy of Interest" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="1460">1460 keV</SelectItem>
+                              <SelectItem value="1764">1764 keV</SelectItem>
+                              <SelectItem value="2614">2614 keV</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit">Submit</Button>
+                  </>
+                )}
               </>
             )}
           </form>
